@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
+    <link rel="icon" href="ticlogo.png" type="image/png">
     <style>
         body {
             display: flex;
@@ -186,11 +187,11 @@
             const availSpots = newBoard.map((cell, i) => cell === '' ? i : null).filter(v => v !== null);
 
             if (checkWinner(newBoard, human)) {
-                return {score: -10};
+                return { score: -10 };
             } else if (checkWinner(newBoard, ai)) {
-                return {score: 10};
+                return { score: 10 };
             } else if (availSpots.length === 0) {
-                return {score: 0};
+                return { score: 0 };
             }
 
             const moves = [];
@@ -212,7 +213,7 @@
                 for (let i = 0; i < moves.length; i++) {
                     if (moves[i].score > bestScore) {
                         bestScore = moves[i].score;
-                        bestMove = i;
+                        bestMove = moves[i];
                     }
                 }
             } else {
@@ -220,12 +221,12 @@
                 for (let i = 0; i < moves.length; i++) {
                     if (moves[i].score < bestScore) {
                         bestScore = moves[i].score;
-                        bestMove = i;
+                        bestMove = moves[i];
                     }
                 }
             }
 
-            return moves[bestMove];
+            return bestMove;
         }
     </script>
 </body>
