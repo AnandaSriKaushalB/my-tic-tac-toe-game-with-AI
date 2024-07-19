@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #FF7E5F, #FEB47B);
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        .status {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .cell:hover {
+            background: #f9f9f9;
+            transform: scale(1.05);
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container input {
+            font-size: 1.2em;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            outline: none;
+        }
+        .input-container button {
+            font-size: 1.2em;
+            padding: 10px;
+            margin-left: 10px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .input-container button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" id="playerLetter" maxlength="1" placeholder="Choose X or O">
+        <button onclick="startGame()">Start Game</button>
+    </div>
+    <div class="status" id="status">Select your letter to start</div>
+    <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+    <script>
+        const boardElement = document.getElementById('board');
+        const cells = document.querySelectorAll('.cell');
+        const statusElement = document.getElementById('status');
+        let board = Array(9).fill('');
+        let human = '';
+        let ai = '';
+        const delay = 500; // Delay in milliseconds before AI makes a move
+
+        const winningCombinations = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function startGame() {
+            const choice = document.getElementById('playerLetter').value.toUpperCase();
+            if (choice !== 'X' && choice !== 'O') {
+                alert("Invalid choice. Defaulting to X.");
+                human = 'X';
+                ai = 'O';
+            } else {
+                human = choice;
+                ai = choice === 'X' ? 'O' : 'X';
+            }
+            statusElement.textContent = "Your turn!";
+            resetBoard();
+        }
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                const index = cell.getAttribute('data-index');
+                if (board[index] === '' && !checkWinner(board, human) && !checkWinner(board, ai)) {
+                    makeMove(index, human);
+                    if (!checkWinner(board, human) && !isBoardFull()) {
+                        statusElement.textContent = "AI's turn...";
+                        setTimeout(() => {
+                            const aiMove = minimax(board, ai).index;
+                            makeMove(aiMove, ai);
+                        }, delay);
+                    }
+                }
+            });
+        });
+
+        function makeMove(index, player) {
+            board[index] = player;
+            document.querySelector(`.cell[data-index='${index}']`).textContent = player;
+            if (checkWinner(board, player)) {
+                statusElement.textContent = player + ' wins!';
+                setTimeout(resetBoard, 2000);
+            } else if (isBoardFull()) {
+                statusElement.textContent = 'It\'s a tie!';
+                setTimeout(resetBoard, 2000);
+            } else if (player === human) {
+                statusElement.textContent = "AI's turn...";
+            } else {
+                statusElement.textContent = "Your turn!";
+            }
+        }
+
+        function resetBoard() {
+            board = Array(9).fill('');
+            cells.forEach(cell => cell.textContent = '');
+            statusElement.textContent = "Select your letter to start";
+        }
+
+        function isBoardFull() {
+            return board.every(cell => cell !== '');
+        }
+
+        function checkWinner(board, player) {
+            return winningCombinations.some(combination => {
+                return combination.every(index => board[index] === player);
+            });
+        }
+
+        function minimax(newBoard, player) {
+            const availSpots = newBoard.map((cell, i) => cell === '' ? i : null).filter(v => v !== null);
+
+            if (checkWinner(newBoard, human)) {
+                return {score: -10};
+            } else if (checkWinner(newBoard, ai)) {
+                return {score: 10};
+            } else if (availSpots.length === 0) {
+                return {score: 0};
+            }
+
+            const moves = [];
+            for (let i = 0; i < availSpots.length; i++) {
+                const move = {};
+                move.index = availSpots[i];
+                newBoard[availSpots[i]] = player;
+
+                const result = minimax(newBoard, player === ai ? human : ai);
+                move.score = result.score;
+
+                newBoard[availSpots[i]] = '';
+                moves.push(move);
+            }
+
+            let bestMove;
+            if (player === ai) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            }
+
+            return moves[bestMove];
+        }
+    </script>
+</body>
+</html>
