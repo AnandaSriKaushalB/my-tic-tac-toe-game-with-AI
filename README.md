@@ -1,7 +1,3 @@
-Here's a concise and informative README entry for your Tic Tac Toe web application:
-
----
-
 # Tic Tac Toe Web Application
 
 ## Description
@@ -26,8 +22,7 @@ This is a Tic Tac Toe web application built using HTML, CSS, and JavaScript. The
 
 1. Download the files or clone the repository:
    ```bash
-   git clone <repository-url>
-   ```
+   git clone https://github.com/AnandaSriKaushalB/tic-tac-toe-   ```
 
 2. Open the `index.html` file in your web browser to play the game.
 
@@ -37,10 +32,3 @@ This is a Tic Tac Toe web application built using HTML, CSS, and JavaScript. The
 - **CSS**: Styling and design of the game interface.
 - **JavaScript**: Game logic, including the implementation of the Minimax algorithm.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to adjust any sections based on additional details or specific requirements of your project.
