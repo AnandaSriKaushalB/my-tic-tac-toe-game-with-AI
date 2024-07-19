@@ -22,7 +22,7 @@ This is a Tic Tac Toe web application built using HTML, CSS, and JavaScript. The
 
 1. Download the files or clone the repository:
    ```bash
-   git clone https://github.com/AnandaSriKaushalB/tic-tac-toe-   ```
+   git clone https://github.com/AnandaSriKaushalB/tic-tac-toe-   
 
 2. Open the `index.html` file in your web browser to play the game.
 
