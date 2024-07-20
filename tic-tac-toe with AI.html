@@ -143,7 +143,7 @@
                     if (!checkWinner(board, human) && !isBoardFull()) {
                         statusElement.textContent = "AI's turn...";
                         setTimeout(() => {
-                            const aiMove = minimax(board, ai).index;
+                            const aiMove = minimax(board, ai, -Infinity, Infinity).index;
                             makeMove(aiMove, ai);
                         }, delay);
                     }
@@ -183,7 +183,7 @@
             });
         }
 
-        function minimax(newBoard, player) {
+        function minimax(newBoard, player, alpha, beta) {
             const availSpots = newBoard.map((cell, i) => cell === '' ? i : null).filter(v => v !== null);
 
             if (checkWinner(newBoard, human)) {
@@ -200,11 +200,19 @@
                 move.index = availSpots[i];
                 newBoard[availSpots[i]] = player;
 
-                const result = minimax(newBoard, player === ai ? human : ai);
+                const result = minimax(newBoard, player === ai ? human : ai, alpha, beta);
                 move.score = result.score;
 
                 newBoard[availSpots[i]] = '';
                 moves.push(move);
+
+                if (player === ai) {
+                    alpha = Math.max(alpha, move.score);
+                    if (beta <= alpha) break;
+                } else {
+                    beta = Math.min(beta, move.score);
+                    if (beta <= alpha) break;
+                }
             }
 
             let bestMove;
